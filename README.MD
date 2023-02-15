@@ -10,10 +10,18 @@ To install the package, run the following command in your project:
   npm install ffmpeg-static-electron-forge
 ```
 
-The library detects your operating system and downloads the binaries, but you can pass the `--all-bins` flag to download all of them for Windows, Linux, Mac, which is approximately 250MB. You can also use your own optimized or customized binaries by creating a bin folder in `node_modules/ffmpeg-static-electron-forge`, and make sure that the operating system directories match `os.platform()` and the architecture matches `os.arch()`.
+The library detects your operating system and downloads the binaries, but you can set env var ALL_BINS=true flag to download all of them for Windows, Linux, Mac, which is approximately 250MB. You can also use your own optimized or customized binaries by creating a bin folder in `node_modules/ffmpeg-static-electron-forge`, and make sure that the operating system directories match `os.platform()` and the architecture matches `os.arch()`.
 
+Linux, Mac
 ```bash
-  npm install ffmpeg-static-electron-forge --all-bins
+  export ALL_BINS=true
+  npm install ffmpeg-static-electron-forge
+```
+
+Windows
+```powershell
+  $env:ALL_BINS="true"
+  npm install ffmpeg-static-electron-forge
 ```
 
 ## Usage

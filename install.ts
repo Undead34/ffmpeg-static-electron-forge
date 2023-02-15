@@ -1,5 +1,3 @@
-import { hideBin } from "yargs/helpers";
-import yargs from "yargs";
 import fs from "fs";
 import os from "os";
 import path from "path";
@@ -29,13 +27,7 @@ try {
   // ignore
 }
 
-const argv: any = yargs(hideBin(process.argv)).option("all-bins", {
-  alias: "a",
-  describe: "Descargar todos los binarios",
-  type: "boolean",
-}).argv;
-
-if (argv["all-bins"]) {
+if (process.env.ALL_BINS) {
   Object.values(downloadUrls).map((value) => {
     download(value);
   });
