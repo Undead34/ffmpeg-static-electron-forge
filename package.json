@@ -1,13 +1,13 @@
 {
   "name": "ffmpeg-static-electron-forge",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "This module is designed for fast integration with electron forge and webpack.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "start": "node ./dist",
+    "start": "node dist/index.js",
     "build": "tsc",
-    "postinstall": "install.ts"
+    "postinstall": "node dist/install.js"
   },
   "keywords": [
     "Electron",

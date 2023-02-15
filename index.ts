@@ -2,6 +2,7 @@ import { ForgeHookFn, ForgeMultiHookMap } from "@electron-forge/shared-types";
 import PluginBase from "@electron-forge/plugin-base";
 import path from "path";
 import glob from "glob";
+import util from "util";
 import os from "os";
 import fs from "fs";
 
@@ -50,6 +51,8 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
   };
 
   prePackage: ForgeHookFn<"prePackage"> = async (forgeConfig) => {
+    if (this.config.remove) await this.removeFFmpegName();
+
     const platform = this.config.platform || os.platform();
     const arch = this.config.arch || os.arch();
 
@@ -79,32 +82,34 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
         ffprobeName
       );
 
-      if (this.config.remove) this.removeFFmpegName();
-
       fs.copyFileSync(ffmpegPath, path.join(this.config.path, ffmpegName));
       fs.copyFileSync(ffprobePath, path.join(this.config.path, ffprobeName));
     }
   };
 
   private removeFFmpegName() {
-    glob(
-      `${this.config.path}/**/{ffmpeg,ffmpeg.exe,ffprobe,ffprobe.exe}`,
-      (err, files) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
+    const deleteFiles = util.promisify(fs.unlink);
 
-        files.forEach((file) => {
-          fs.unlink(file, (err) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-          });
-        });
-      }
+    const patron = path.join(
+      this.config.path,
+      "**",
+      "@(ffmpeg|ffmpeg.exe|ffprobe|ffprobe.exe)"
     );
+    glob(patron, {}, async (error, files) => {
+      if (error) {
+        console.error(`Error to find files: ${error}`);
+        return;
+      }
+
+      try {
+        for (const file of files) {
+          await deleteFiles(file);
+          console.log(`Deleted file: ${file}`);
+        }
+      } catch (error) {
+        console.error(`Error to delete file: ${error}`);
+      }
+    });
   }
 }
 
