@@ -13,6 +13,9 @@ interface FFmpegStaticOptions {
   path: string;
 }
 
+const ffmpegName = os.platform() === "win32" ? "ffmpeg.exe" : "ffmpeg";
+const ffprobeName = os.platform() === "win32" ? "ffprobe.exe" : "ffprobe";
+
 class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
   name = "ffmpeg-static-electron-forge";
 
@@ -64,9 +67,6 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
 
     // @ts-ignore
     if (platform in binaries && binaries[platform].includes(arch)) {
-      const ffmpegName = platform === "win32" ? "ffmpeg.exe" : "ffmpeg";
-      const ffprobeName = platform === "win32" ? "ffprobe.exe" : "ffprobe";
-
       const ffmpegPath = path.join(
         __dirname,
         "bin",
@@ -114,3 +114,7 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
 }
 
 export default FFmpegStatic;
+export const paths = {
+  ffmpegPath: path.join(__dirname, ffmpegName),
+  ffprobePath: path.join(__dirname, ffprobeName),
+};

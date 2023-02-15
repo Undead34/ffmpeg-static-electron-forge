@@ -7,13 +7,13 @@ This package provides an easy and quick integration of FFmpeg with electron-forg
 To install the package, run the following command in your project:
 
 ```bash
-  npm install --save-dev ffmpeg-static-electron-forge
+  npm install ffmpeg-static-electron-forge
 ```
 
 The library detects your operating system and downloads the binaries, but you can pass the `--all-bins` flag to download all of them for Windows, Linux, Mac, which is approximately 250MB. You can also use your own optimized or customized binaries by creating a bin folder in `node_modules/ffmpeg-static-electron-forge`, and make sure that the operating system directories match `os.platform()` and the architecture matches `os.arch()`.
 
 ```bash
-  npm install --save-dev ffmpeg-static-electron-forge --all-bins
+  npm install ffmpeg-static-electron-forge --all-bins
 ```
 
 ## Usage
@@ -73,6 +73,19 @@ module.exports = {
     }),
   ],
 };
+```
+
+```typescript
+import ffmpeg from "fluent-ffmpeg";
+import { paths } from "ffmpeg-static-electron-forge";
+
+const ffmpegPath = paths.ffmpegPath.replace("app.asar", "app.asar.unpacked");
+const ffprobePath = paths.ffprobePath.replace("app.asar", "app.asar.unpacked");
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
+
+export default ffmpeg;
 ```
 
 ## Contributions
