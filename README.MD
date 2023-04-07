@@ -96,6 +96,60 @@ ffmpeg.setFfprobePath(ffprobePath);
 export default ffmpeg;
 ```
 
+## Known errors
+
+The first error that is not from this package, if not from fluent-ffmpeg is when doing a make to the application, this error is easily fixable by changing in the `index.js` in the node_modules folder this code.
+
+This needs to be changed:
+
+```typescript
+module.exports = process.env.FLUENTFFMPEG_COV ? require('./lib-cov/fluent-ffmpeg') : require('./lib/fluent-ffmpeg');
+```
+
+for this
+```typescript
+module.exports = require('./lib/fluent-ffmpeg');
+```
+or explicitly set the environment variable process.env.FLUENTFFMPEG_COV to false
+
+Another error is that in development mode the binaries are not found.
+
+the latest version of this package solves this problem and here is an example of how to export ffmpeg for development and production.
+
+
+`NOTE: this example works whether you are using ES Modules or require.`
+
+
+```typescript
+import { paths, bins } from "ffmpeg-static-electron-forge";
+import ffmpeg from "fluent-ffmpeg";
+import path from "path";
+
+let ffmpegPath: string, ffprobePath: string;
+
+if (process.env.NODE_ENV !== "development") {
+  ffmpegPath = paths.ffmpegPath.replace("app.asar", "app.asar.unpacked");
+  ffprobePath = paths.ffprobePath.replace("app.asar", "app.asar.unpacked");
+} else {
+  let ffmpegBinPaths = path.dirname(
+    require.resolve("ffmpeg-static-electron-forge")
+  );
+  ffmpegBinPaths = path.resolve(process.cwd(), ffmpegBinPaths, "bin");
+  ffmpegPath = path.join(ffmpegBinPaths, bins.ffmpegPath);
+  ffprobePath = path.join(ffmpegBinPaths, bins.ffprobePath);
+}
+
+ffmpeg.setFfmpegPath(ffmpegPath);
+ffmpeg.setFfprobePath(ffprobePath);
+```
+
+for older versions you will have to manually copy the path to the binaries and use them while they are under development.
+```
+X:\MyApp\node_modules\ffmpeg-static-electron-forge\dist\bin\win32\x64\ffmpeg.exe
+X:\MyApp\node_modules\ffmpeg-static-electron-forge\dist\bin\win32\x64\ffprobe.exe
+```
+
+
 ## Contributions
 
 If you find any issues or have any suggestions to improve this package, please create an issue on our GitHub repository. If you want to contribute with code, please fork the repository and create a pull request with your changes.

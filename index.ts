@@ -118,3 +118,8 @@ export const paths = {
   ffmpegPath: path.join(__dirname, ffmpegName),
   ffprobePath: path.join(__dirname, ffprobeName),
 };
+
+export const bins = {
+  ffmpegPath: path.join(os.platform(), os.arch(), ffmpegName),
+  ffprobePath: path.join(os.platform(), os.arch(), ffprobeName),
+};
