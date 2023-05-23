@@ -1,7 +1,7 @@
 import { ForgeHookFn, ForgeMultiHookMap } from "@electron-forge/shared-types";
 import PluginBase from "@electron-forge/plugin-base";
 import path from "path";
-import glob from "glob";
+import { glob } from "glob";
 import util from "util";
 import os from "os";
 import fs from "fs";
@@ -87,20 +87,17 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
     }
   };
 
-  private removeFFmpegName() {
+  private async removeFFmpegName() {
     const deleteFiles = util.promisify(fs.unlink);
 
-    const patron = path.join(
+    const pattern = path.join(
       this.config.path,
       "**",
       "@(ffmpeg|ffmpeg.exe|ffprobe|ffprobe.exe)"
     );
-    glob(patron, {}, async (error, files) => {
-      if (error) {
-        console.error(`Error to find files: ${error}`);
-        return;
-      }
 
+    try {
+      const files = await glob(pattern);
       try {
         for (const file of files) {
           await deleteFiles(file);
@@ -109,7 +106,9 @@ class FFmpegStatic extends PluginBase<FFmpegStaticOptions> {
       } catch (error) {
         console.error(`Error to delete file: ${error}`);
       }
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
